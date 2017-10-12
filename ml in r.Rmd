@@ -1,0 +1,57 @@
+---
+title: "ml inr"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(kernlab)
+library(caret)
+data(spam)
+spam1<- createDataPartition(y=spam$type,p=0.75,list = FALSE)
+testing <- spam[spam1,]
+training <- spam[-spam1,]
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library(e1071)
+set.seed(32343)
+modelFit <- train(type~.,data = training,method="glm")
+modelFit
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+modelFit$finalModel
+predictions <- predict(modelFit,newdata=testing)
+predictions
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+confusionMatrix(predictions,testing$type)
+```
+```{r}
+folds <- createFolds(y=spam$type,k=10,list = TRUE,returnTrain = TRUE)
+sapply(folds,length)
+folds[[1]][1:10]
+```
+```{r}
+fold <- createResample(y=spam$type,times=10,list=TRUE)
+sapply(fold,length)
+```
+```{r}
+tme <- 1:1000
+folds1 <- createTimeSlices(y=tme,initialWindow = 20,horizon = 10)
+names(folds1)
+folds1$test[[1]]
+```
+
